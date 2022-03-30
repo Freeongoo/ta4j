@@ -51,22 +51,27 @@ import ta4jexamples.loaders.CsvTradesLoader;
  */
 public class RSI2Strategy {
 
+
+    public static Strategy buildStrategy(BarSeries series) {
+        return buildStrategy("rsi", series, 5, 200, 2);
+    }
+
     /**
      * @param series a bar series
      * @return a 2-period RSI strategy
      */
-    public static Strategy buildStrategy(BarSeries series) {
+    public static Strategy buildStrategy(String name, BarSeries series, int shortBar, int longBar, int rsiBar) {
         if (series == null) {
             throw new IllegalArgumentException("Series cannot be null");
         }
 
         ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
-        SMAIndicator shortSma = new SMAIndicator(closePrice, 5);
-        SMAIndicator longSma = new SMAIndicator(closePrice, 200);
+        SMAIndicator shortSma = new SMAIndicator(closePrice, shortBar);
+        SMAIndicator longSma = new SMAIndicator(closePrice, longBar);
 
         // We use a 2-period RSI indicator to identify buying
         // or selling opportunities within the bigger trend.
-        RSIIndicator rsi = new RSIIndicator(closePrice, 2);
+        RSIIndicator rsi = new RSIIndicator(closePrice, rsiBar);
 
         // Entry rule
         // The long-term trend is up when a security is above its 200-period SMA.
@@ -82,7 +87,7 @@ public class RSI2Strategy {
 
         // TODO: Finalize the strategy
 
-        return new BaseStrategy(entryRule, exitRule);
+        return new BaseStrategy(name, entryRule, exitRule);
     }
 
     public static void main(String[] args) {

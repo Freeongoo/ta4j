@@ -47,6 +47,12 @@ public class RSIBacktestWithShowStatsBtc5Min {
         BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         final List<Strategy> strategies = new ArrayList<>();
+        /*for (int i = 5; i <= 11; i ++) {
+            for (int j = i + 10; j <= 80; j = j + 10) {
+                Strategy strategy = RSI2Strategy.buildStrategy("RSI " + i + "_" + j, series, i, j, 2);
+                strategies.add(strategy);
+            }
+        }*/
         Strategy strategy = RSI2Strategy.buildStrategy(series);
         strategies.add(strategy);
 
