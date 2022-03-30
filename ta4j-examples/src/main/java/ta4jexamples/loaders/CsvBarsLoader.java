@@ -44,26 +44,24 @@ import com.opencsv.CSVReader;
  */
 public class CsvBarsLoader {
 
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     /**
      * @return the bar series from Apple Inc. bars.
      */
     public static BarSeries loadAppleIncSeries() {
-        return loadCsvSeries("appleinc_bars_from_20130101_usd.csv");
+        return loadCsvSeries("apple_bars", "appleinc_bars_from_20130101_usd.csv");
     }
 
-    public static BarSeries loadCsvSeries(String filename) {
-
+    public static BarSeries loadCsvSeries(String seriesName, String filename, String dateFormat) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormat);
         InputStream stream = CsvBarsLoader.class.getClassLoader().getResourceAsStream(filename);
 
-        BarSeries series = new BaseBarSeries("apple_bars");
+        BarSeries series = new BaseBarSeries(seriesName);
 
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")), ',', '"',
                 1)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
-                ZonedDateTime date = LocalDate.parse(line[0], DATE_FORMAT).atStartOfDay(ZoneId.systemDefault());
+                ZonedDateTime date = LocalDate.parse(line[0], dateTimeFormatter).atStartOfDay(ZoneId.systemDefault());
                 double open = Double.parseDouble(line[1]);
                 double high = Double.parseDouble(line[2]);
                 double low = Double.parseDouble(line[3]);
@@ -78,6 +76,10 @@ public class CsvBarsLoader {
             Logger.getLogger(CsvBarsLoader.class.getName()).log(Level.SEVERE, "Error while parsing value", nfe);
         }
         return series;
+    }
+
+    public static BarSeries loadCsvSeries(String seriesName, String filename) {
+        return loadCsvSeries(seriesName, filename, "yyyy-MM-dd");
     }
 
     public static void main(String[] args) {

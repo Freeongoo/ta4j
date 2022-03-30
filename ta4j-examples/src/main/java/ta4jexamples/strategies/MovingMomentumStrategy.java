@@ -50,11 +50,8 @@ import ta4jexamples.loaders.CsvTradesLoader;
  */
 public class MovingMomentumStrategy {
 
-    /**
-     * @param series the bar series
-     * @return the moving momentum strategy
-     */
-    public static Strategy buildStrategy(BarSeries series) {
+    public static Strategy buildStrategy(String name, BarSeries series, int EMAIndicatorShortBar, int EMAIndicatorLongBar,
+                                         int StochasticOscillatorKIndicatorBar, int MacdBar) {
         if (series == null) {
             throw new IllegalArgumentException("Series cannot be null");
         }
@@ -65,13 +62,13 @@ public class MovingMomentumStrategy {
         // moving average.
         // The bias is bearish when the shorter-moving average moves below the longer
         // moving average.
-        EMAIndicator shortEma = new EMAIndicator(closePrice, 9);
-        EMAIndicator longEma = new EMAIndicator(closePrice, 26);
+        EMAIndicator shortEma = new EMAIndicator(closePrice, EMAIndicatorShortBar);
+        EMAIndicator longEma = new EMAIndicator(closePrice, EMAIndicatorLongBar);
 
-        StochasticOscillatorKIndicator stochasticOscillK = new StochasticOscillatorKIndicator(series, 14);
+        StochasticOscillatorKIndicator stochasticOscillK = new StochasticOscillatorKIndicator(series, StochasticOscillatorKIndicatorBar);
 
-        MACDIndicator macd = new MACDIndicator(closePrice, 9, 26);
-        EMAIndicator emaMacd = new EMAIndicator(macd, 18);
+        MACDIndicator macd = new MACDIndicator(closePrice, EMAIndicatorShortBar, EMAIndicatorLongBar);
+        EMAIndicator emaMacd = new EMAIndicator(macd, MacdBar);
 
         // Entry rule
         Rule entryRule = new OverIndicatorRule(shortEma, longEma) // Trend
@@ -83,7 +80,15 @@ public class MovingMomentumStrategy {
                 .and(new CrossedUpIndicatorRule(stochasticOscillK, 80)) // Signal 1
                 .and(new UnderIndicatorRule(macd, emaMacd)); // Signal 2
 
-        return new BaseStrategy(entryRule, exitRule);
+        return new BaseStrategy(name, entryRule, exitRule);
+    }
+
+    /**
+     * @param series the bar series
+     * @return the moving momentum strategy
+     */
+    public static Strategy buildStrategy(BarSeries series) {
+        return buildStrategy("MovingMomentum", series, 9, 26, 14, 18);
     }
 
     public static void main(String[] args) {

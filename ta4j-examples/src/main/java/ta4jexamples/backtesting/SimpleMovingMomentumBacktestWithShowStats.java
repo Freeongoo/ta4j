@@ -1,0 +1,90 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2017 Marc de Verdelhan, 2017-2021 Ta4j Organization & respective
+ * authors (see AUTHORS)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package ta4jexamples.backtesting;
+
+import org.ta4j.core.*;
+import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.num.DecimalNum;
+import org.ta4j.core.num.Num;
+import org.ta4j.core.reports.TradingStatement;
+import org.ta4j.core.rules.OverIndicatorRule;
+import org.ta4j.core.rules.UnderIndicatorRule;
+import ta4jexamples.loaders.CsvBarsLoader;
+import ta4jexamples.strategies.MovingMomentumStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+
+// not work
+public class SimpleMovingMomentumBacktestWithShowStats {
+
+    public static void main(String[] args) {
+        BarSeries series = CsvBarsLoader.loadAppleIncSeries();
+
+        final List<Strategy> strategies = new ArrayList<>();
+        strategies.add(MovingMomentumStrategy.buildStrategy(series));
+        /*for (int i = 9; i <= 26; i ++) {
+            for (int j = i; j <= 26; j ++) {
+                Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j, series, i, j, 14, 18);
+                strategies.add(strategy);
+            }
+        }*/
+
+        /*for (int i = 9; i <= 26; i ++) {
+            for (int j = i; j <= 26; j ++) {
+                for (int k = 9; k <= 26; k ++) {
+                    for (int n = 9; n <= 26; n ++) {
+                        Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j + "_" + k + "_" + n, series, i, j, k, n);
+                        strategies.add(strategy);
+                    }
+                }
+            }
+        }*/
+        BacktestExecutor backtestExecutor = new BacktestExecutor(series);
+        List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY);
+        for (TradingStatement tradingStatement : execute) {
+            Strategy strategy = tradingStatement.getStrategy();
+            System.out.println("\nName of strategy: " +strategy.getName());
+
+            Num totalProfitLoss = tradingStatement.getPerformanceReport().getTotalProfitLoss();
+            Num totalProfitLossPercentage = tradingStatement.getPerformanceReport().getTotalProfitLossPercentage();
+            System.out.println("totalProfitLoss: " + totalProfitLoss);
+            System.out.println("totalProfitLossPercentage: " + totalProfitLossPercentage);
+        }
+        System.out.println(execute);
+    }
+
+    private static Rule createEntryRule(BarSeries series, int barCount) {
+        Indicator<Num> closePrice = new ClosePriceIndicator(series);
+        SMAIndicator sma = new SMAIndicator(closePrice, barCount);
+        return new UnderIndicatorRule(sma, closePrice);
+    }
+
+    private static Rule createExitRule(BarSeries series, int barCount) {
+        Indicator<Num> closePrice = new ClosePriceIndicator(series);
+        SMAIndicator sma = new SMAIndicator(closePrice, barCount);
+        return new OverIndicatorRule(sma, closePrice);
+    }
+}
