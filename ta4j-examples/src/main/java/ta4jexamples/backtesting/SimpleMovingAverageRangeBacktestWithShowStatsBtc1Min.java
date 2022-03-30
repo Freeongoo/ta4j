@@ -1,0 +1,73 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014-2017 Marc de Verdelhan, 2017-2021 Ta4j Organization & respective
+ * authors (see AUTHORS)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package ta4jexamples.backtesting;
+
+import org.ta4j.core.*;
+import org.ta4j.core.indicators.SMAIndicator;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.num.DecimalNum;
+import org.ta4j.core.num.Num;
+import org.ta4j.core.reports.TradingStatement;
+import org.ta4j.core.rules.OverIndicatorRule;
+import org.ta4j.core.rules.UnderIndicatorRule;
+import ta4jexamples.loaders.CsvBarsLoader;
+import ta4jexamples.strategies.SMAIndicatorStrategy;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.reverseOrder;
+
+public class SimpleMovingAverageRangeBacktestWithShowStatsBtc1Min {
+
+    public static void main(String[] args) {
+        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min1.csv", "yyyy-MM-dd'T'HH:mm:ss");
+
+        int start = 3;
+        int stop = 50;
+        int step = 5;
+
+        final List<Strategy> strategies = new ArrayList<>();
+        for (int i = start; i <= stop; i += step) {
+            Strategy strategy = SMAIndicatorStrategy.buildStrategy(series, i);
+            strategies.add(strategy);
+        }
+        BacktestExecutor backtestExecutor = new BacktestExecutor(series);
+        List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY).stream()
+                .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLoss(), reverseOrder()))
+                .collect(Collectors.toList());
+        for (TradingStatement tradingStatement : execute) {
+            Strategy strategy = tradingStatement.getStrategy();
+            System.out.println("\nName of strategy: " +strategy.getName());
+
+            Num totalProfitLoss = tradingStatement.getPerformanceReport().getTotalProfitLoss();
+            Num totalProfitLossPercentage = tradingStatement.getPerformanceReport().getTotalProfitLossPercentage();
+            System.out.println("totalProfitLoss: " + totalProfitLoss);
+            System.out.println("totalProfitLossPercentage: " + totalProfitLossPercentage);
+        }
+        System.out.println(execute);
+    }
+}

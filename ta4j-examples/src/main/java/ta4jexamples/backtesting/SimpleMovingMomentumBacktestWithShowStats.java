@@ -35,16 +35,29 @@ import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.strategies.MovingMomentumStrategy;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.reverseOrder;
 
 // not work
 public class SimpleMovingMomentumBacktestWithShowStats {
 
     public static void main(String[] args) {
-        BarSeries series = CsvBarsLoader.loadAppleIncSeries();
+        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         final List<Strategy> strategies = new ArrayList<>();
-        strategies.add(MovingMomentumStrategy.buildStrategy(series));
+        strategies.add(MovingMomentumStrategy.buildStrategy("name", series, 4, 40, 10, 15));
+
+        /*for (int i = 8; i <= 11; i ++) {
+            for (int j = i + 5; j <= 26; j ++) {
+                Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j, series, i, j, 14, 18);
+                strategies.add(strategy);
+            }
+        }*/
+
         /*for (int i = 9; i <= 26; i ++) {
             for (int j = i; j <= 26; j ++) {
                 Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j, series, i, j, 14, 18);
@@ -63,7 +76,9 @@ public class SimpleMovingMomentumBacktestWithShowStats {
             }
         }*/
         BacktestExecutor backtestExecutor = new BacktestExecutor(series);
-        List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY);
+        List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY).stream()
+                .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLoss(), reverseOrder()))
+                .collect(Collectors.toList());
         for (TradingStatement tradingStatement : execute) {
             Strategy strategy = tradingStatement.getStrategy();
             System.out.println("\nName of strategy: " +strategy.getName());
@@ -74,17 +89,9 @@ public class SimpleMovingMomentumBacktestWithShowStats {
             System.out.println("totalProfitLossPercentage: " + totalProfitLossPercentage);
         }
         System.out.println(execute);
-    }
 
-    private static Rule createEntryRule(BarSeries series, int barCount) {
-        Indicator<Num> closePrice = new ClosePriceIndicator(series);
-        SMAIndicator sma = new SMAIndicator(closePrice, barCount);
-        return new UnderIndicatorRule(sma, closePrice);
-    }
-
-    private static Rule createExitRule(BarSeries series, int barCount) {
-        Indicator<Num> closePrice = new ClosePriceIndicator(series);
-        SMAIndicator sma = new SMAIndicator(closePrice, barCount);
-        return new OverIndicatorRule(sma, closePrice);
+        /*Name of strategy: MovingMomentum 8_22
+        totalProfitLoss: -441690.0
+        totalProfitLossPercentage: -13.616501186872136266018823475240*/
     }
 }

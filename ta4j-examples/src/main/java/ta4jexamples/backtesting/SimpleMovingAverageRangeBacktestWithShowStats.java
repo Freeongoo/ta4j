@@ -32,6 +32,7 @@ import org.ta4j.core.reports.TradingStatement;
 import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 import ta4jexamples.loaders.CsvBarsLoader;
+import ta4jexamples.strategies.SMAIndicatorStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +48,7 @@ public class SimpleMovingAverageRangeBacktestWithShowStats {
 
         final List<Strategy> strategies = new ArrayList<>();
         for (int i = start; i <= stop; i += step) {
-            Strategy strategy = new BaseStrategy("Sma(" + i + ")", createEntryRule(series, i),
-                    createExitRule(series, i));
+            Strategy strategy = SMAIndicatorStrategy.buildStrategy(series, i);
             strategies.add(strategy);
         }
         BacktestExecutor backtestExecutor = new BacktestExecutor(series);
@@ -63,17 +63,5 @@ public class SimpleMovingAverageRangeBacktestWithShowStats {
             System.out.println("totalProfitLossPercentage: " + totalProfitLossPercentage);
         }
         System.out.println(execute);
-    }
-
-    private static Rule createEntryRule(BarSeries series, int barCount) {
-        Indicator<Num> closePrice = new ClosePriceIndicator(series);
-        SMAIndicator sma = new SMAIndicator(closePrice, barCount);
-        return new UnderIndicatorRule(sma, closePrice);
-    }
-
-    private static Rule createExitRule(BarSeries series, int barCount) {
-        Indicator<Num> closePrice = new ClosePriceIndicator(series);
-        SMAIndicator sma = new SMAIndicator(closePrice, barCount);
-        return new OverIndicatorRule(sma, closePrice);
     }
 }

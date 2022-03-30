@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,6 +39,7 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
 
 import com.opencsv.CSVReader;
+import ta4jexamples.utils.DateUtils;
 
 /**
  * This class build a Ta4j bar series from a CSV file containing bars.
@@ -52,16 +54,15 @@ public class CsvBarsLoader {
     }
 
     public static BarSeries loadCsvSeries(String seriesName, String filename, String dateFormat) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormat);
         InputStream stream = CsvBarsLoader.class.getClassLoader().getResourceAsStream(filename);
-
         BarSeries series = new BaseBarSeries(seriesName);
 
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(stream, Charset.forName("UTF-8")), ',', '"',
                 1)) {
             String[] line;
             while ((line = csvReader.readNext()) != null) {
-                ZonedDateTime date = LocalDate.parse(line[0], dateTimeFormatter).atStartOfDay(ZoneId.systemDefault());
+                LocalDateTime localDateTime = DateUtils.parseToLocalDateTime(line[0], dateFormat);
+                ZonedDateTime date = DateUtils.asZonedDateTime(localDateTime);
                 double open = Double.parseDouble(line[1]);
                 double high = Double.parseDouble(line[2]);
                 double low = Double.parseDouble(line[3]);
