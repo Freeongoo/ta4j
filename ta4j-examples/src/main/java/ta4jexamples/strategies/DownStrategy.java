@@ -59,16 +59,19 @@ public class DownStrategy {
     public static void main(String[] args) {
         // Getting the bar series
         //BarSeries series = CsvTradesLoader.loadBitstampSeries();
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         // Building the trading strategy
-        Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(2.), 10);
+        //Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(0.9), 5);
+        Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(1.3), 7);
 
         // Running the strategy
         BarSeriesManager seriesManager = new BarSeriesManager(series);
         TradingRecord tradingRecord = seriesManager.run(strategy);
         DisplayStatsUtils.printStat(series, tradingRecord);
 
-        // Total return: 1.2072037344741507777377022323880
+        // Total return: 2.7650859409464753441105102817617  0.9 5
+        // Total return: 2.8732216648275912873136885284400  1.3 7
     }
 }

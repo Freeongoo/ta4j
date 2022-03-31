@@ -127,12 +127,13 @@ public class BuyAndSellSignalsToChartDown {
     public static void main(String[] args) {
 
         // Getting the bar series
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-
+        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
         // Building the trading strategy
         //Strategy strategy = MovingMomentumStrategy.buildStrategy(series);
 
         Strategy strategy = DownStrategy.buildStrategy("Down percent:" + 0.89 + " count: " + 5, series, DecimalNum.valueOf(0.89), 5);
+        //Strategy strategy = DownStrategy.buildStrategy("Down percent:" + 1.3 + " count: " + 7, series, DecimalNum.valueOf(1.3), 7);
 
         /*
          * Building chart datasets
