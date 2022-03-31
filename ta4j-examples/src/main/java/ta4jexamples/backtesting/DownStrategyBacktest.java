@@ -46,6 +46,7 @@ public class DownStrategyBacktest {
 
     public static void main(String[] args) {
         BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
         //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min1.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         final List<Strategy> strategies = new ArrayList<>();
@@ -62,7 +63,16 @@ public class DownStrategyBacktest {
                 .collect(Collectors.toList());
         DisplayStatsUtils.printStats(execute);
 
-        // 5  min
+        // 5 min (long)
+        /*Name of strategy: Down percent:0.8999999999999999 count: 5
+        totalProfitLoss: 1127000.0
+        totalProfitLossPercentage: 55.914305886561113214347340783438
+        totalLoss: -5586475.0
+        totalProfit: 6713475.0
+        lossCount: 127
+        profitCount: 240*/
+
+        // 5  min (down trend)
         /*Name of strategy: Down percent:0.8999999999999999 count: 5
         totalProfitLoss: 704075.0
         totalProfitLossPercentage: 33.872918948018439396169890871145
