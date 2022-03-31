@@ -21,56 +21,54 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package ta4jexamples.backtesting;
+package ta4jexamples.strategies;
 
 import org.ta4j.core.*;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.DecimalNum;
 import org.ta4j.core.num.Num;
-import org.ta4j.core.reports.TradingStatement;
-import org.ta4j.core.rules.OverIndicatorRule;
-import org.ta4j.core.rules.UnderIndicatorRule;
+import org.ta4j.core.rules.*;
 import ta4jexamples.loaders.CsvBarsLoader;
-import ta4jexamples.strategies.MovingMomentumStrategy;
 import ta4jexamples.utils.DisplayStatsUtils;
+import ta4jexamples.utils.MathUtils;
+import ta4jexamples.utils.PriceUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+public class DownStrategy {
 
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.reverseOrder;
-
-// not work
-public class SimpleMovingMomentumBacktestWithShowStats {
-
-    public static void main(String[] args) {
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-
-        final List<Strategy> strategies = new ArrayList<>();
-        //strategies.add(MovingMomentumStrategy.buildStrategy("name", series, 4, 40, 10, 15));
-
-        for (int i = 5; i <= 20; i = i + 2) {
-            for (int j = i + 5; j <= 50; j = j + 5) {
-                Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j, series, i, j, 14, 18);
-                strategies.add(strategy);
-            }
+    public static Strategy buildStrategy(String name, BarSeries series, Num gainPercentage, int barCount) {
+        if (series == null) {
+            throw new IllegalArgumentException("Series cannot be null");
         }
 
-        /*Name of strategy: MovingMomentum 19_39
-        totalProfitLoss: -534745.0
-        totalProfitLossPercentage: -21.364912224273855061595981999530
-        totalLoss: -3104040.0
-        totalProfit: 2569295.0
-        lossCount: 112
-        profitCount: 60*/
+        return new BaseStrategy(name, createEntryRule(series, gainPercentage, barCount),
+                createExitRule(series, barCount));
+    }
 
-        BacktestExecutor backtestExecutor = new BacktestExecutor(series);
-        List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY).stream()
-                .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLossPercentage(), reverseOrder()))
-                .collect(Collectors.toList());
-        DisplayStatsUtils.printStats(execute);
+    private static Rule createEntryRule(BarSeries series, Num gainPercentage, int barCount) {
+        ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
+        return new PercentDownRule(closePrice, gainPercentage, barCount);
+    }
+
+    private static Rule createExitRule(BarSeries series, int barCount) {
+        ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
+        return new StopLossRule(closePrice, DecimalNum.valueOf(1.5))
+                .or(new StopGainRule(closePrice, DecimalNum.valueOf(1.)));
+    }
+
+    public static void main(String[] args) {
+        // Getting the bar series
+        //BarSeries series = CsvTradesLoader.loadBitstampSeries();
+        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+
+        // Building the trading strategy
+        Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(2.), 10);
+
+        // Running the strategy
+        BarSeriesManager seriesManager = new BarSeriesManager(series);
+        TradingRecord tradingRecord = seriesManager.run(strategy);
+        DisplayStatsUtils.printStat(series, tradingRecord);
+
+        // Total return: 1.2072037344741507777377022323880
     }
 }

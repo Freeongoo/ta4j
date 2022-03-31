@@ -59,7 +59,7 @@ public class GlobalExtremaBacktestWithShowStatsBtc5Min {
 
         BacktestExecutor backtestExecutor = new BacktestExecutor(series);
         List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY).stream()
-                .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLoss(), reverseOrder()))
+                .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLossPercentage(), reverseOrder()))
                 .collect(Collectors.toList());
         DisplayStatsUtils.printStats(execute);
     }
