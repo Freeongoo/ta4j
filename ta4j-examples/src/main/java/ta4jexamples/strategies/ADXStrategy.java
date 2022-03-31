@@ -40,7 +40,9 @@ import org.ta4j.core.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 
+import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.loaders.CsvTradesLoader;
+import ta4jexamples.utils.DisplayStatsUtils;
 
 /**
  * ADX indicator based strategy
@@ -84,7 +86,8 @@ public class ADXStrategy {
     public static void main(String[] args) {
 
         // Getting the bar series
-        BarSeries series = CsvTradesLoader.loadBitstampSeries();
+        //BarSeries series = CsvTradesLoader.loadBitstampSeries();
+        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         // Building the trading strategy
         Strategy strategy = buildStrategy(series);
@@ -92,10 +95,6 @@ public class ADXStrategy {
         // Running the strategy
         BarSeriesManager seriesManager = new BarSeriesManager(series);
         TradingRecord tradingRecord = seriesManager.run(strategy);
-        System.out.println("Number of positions for the strategy: " + tradingRecord.getPositionCount());
-
-        // Analysis
-        System.out.println(
-                "Total return for the strategy: " + new GrossReturnCriterion().calculate(series, tradingRecord));
+        DisplayStatsUtils.printStat(series, tradingRecord);
     }
 }

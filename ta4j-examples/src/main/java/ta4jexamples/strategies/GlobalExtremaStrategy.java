@@ -86,8 +86,8 @@ public class GlobalExtremaStrategy {
     public static void main(String[] args) {
 
         // Getting the bar series
-        BarSeries series = CsvTradesLoader.loadBitstampSeries();
-        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        //BarSeries series = CsvTradesLoader.loadBitstampSeries();
+        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         // Building the trading strategy
         Strategy strategy = buildStrategy(series);

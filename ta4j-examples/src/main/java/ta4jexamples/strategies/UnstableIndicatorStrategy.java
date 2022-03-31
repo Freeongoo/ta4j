@@ -44,6 +44,7 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.rules.CrossedUpIndicatorRule;
+import ta4jexamples.utils.DisplayStatsUtils;
 
 public class UnstableIndicatorStrategy {
 
@@ -90,8 +91,7 @@ public class UnstableIndicatorStrategy {
         // Running the strategy
         BarSeriesManager seriesManager = new BarSeriesManager(series);
         TradingRecord tradingRecord = seriesManager.run(strategy);
-
-        System.out.println(name + " " + tradingRecord.getPositions());
+        DisplayStatsUtils.printStat(series, tradingRecord);
     }
 
 }
