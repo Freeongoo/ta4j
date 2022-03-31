@@ -62,7 +62,7 @@ public class DownStrategyBacktest {
                 .collect(Collectors.toList());
         DisplayStatsUtils.printStats(execute);
 
-        // 5 min
+        // 5  min
         /*Name of strategy: Down percent:0.8999999999999999 count: 5
         totalProfitLoss: 704075.0
         totalProfitLossPercentage: 33.872918948018439396169890871145
