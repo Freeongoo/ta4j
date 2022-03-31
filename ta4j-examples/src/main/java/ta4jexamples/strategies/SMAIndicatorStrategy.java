@@ -31,13 +31,12 @@ import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.num.DecimalNum;
 import org.ta4j.core.num.Num;
-import org.ta4j.core.rules.CrossedDownIndicatorRule;
-import org.ta4j.core.rules.CrossedUpIndicatorRule;
-import org.ta4j.core.rules.OverIndicatorRule;
-import org.ta4j.core.rules.UnderIndicatorRule;
+import org.ta4j.core.rules.*;
 import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.loaders.CsvTradesLoader;
+import ta4jexamples.utils.DisplayStatsUtils;
 
 public class SMAIndicatorStrategy {
 
@@ -51,9 +50,11 @@ public class SMAIndicatorStrategy {
     }
 
     private static Rule createEntryRule(BarSeries series, int barCount) {
-        Indicator<Num> closePrice = new ClosePriceIndicator(series);
+        ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         SMAIndicator sma = new SMAIndicator(closePrice, barCount);
         return new UnderIndicatorRule(sma, closePrice);
+                //.or(new StopLossRule(closePrice, DecimalNum.valueOf(0.5)))
+                //.or(new StopGainRule(closePrice, DecimalNum.valueOf(0.5)));
     }
 
     private static Rule createExitRule(BarSeries series, int barCount) {
@@ -73,37 +74,6 @@ public class SMAIndicatorStrategy {
         // Running the strategy
         BarSeriesManager seriesManager = new BarSeriesManager(series);
         TradingRecord tradingRecord = seriesManager.run(strategy);
-        System.out.println("Number of positions for the strategy: " + tradingRecord.getPositionCount());
-
-        // Analysis
-        System.out.println(
-                "Total return for the strategy: " + new GrossReturnCriterion().calculate(series, tradingRecord));
-
-        // Total profit
-        GrossReturnCriterion totalReturn = new GrossReturnCriterion();
-        System.out.println("Total return: " + totalReturn.calculate(series, tradingRecord));
-        // Number of bars
-        System.out.println("Number of bars: " + new NumberOfBarsCriterion().calculate(series, tradingRecord));
-        // Average profit (per bar)
-        System.out.println(
-                "Average return (per bar): " + new AverageReturnPerBarCriterion().calculate(series, tradingRecord));
-        // Number of positions
-        System.out.println("Number of positions: " + new NumberOfPositionsCriterion().calculate(series, tradingRecord));
-        // Profitable position ratio
-        System.out.println(
-                "Winning positions ratio: " + new WinningPositionsRatioCriterion().calculate(series, tradingRecord));
-        // Maximum drawdown
-        System.out.println("Maximum drawdown: " + new MaximumDrawdownCriterion().calculate(series, tradingRecord));
-        // Reward-risk ratio
-        System.out.println("Return over maximum drawdown: "
-                + new ReturnOverMaxDrawdownCriterion().calculate(series, tradingRecord));
-        // Total transaction cost
-        System.out.println("Total transaction cost (from $1000): "
-                + new LinearTransactionCostCriterion(1000, 0.005).calculate(series, tradingRecord));
-        // Buy-and-hold
-        System.out.println("Buy-and-hold return: " + new BuyAndHoldReturnCriterion().calculate(series, tradingRecord));
-        // Total profit vs buy-and-hold
-        System.out.println("Custom strategy return vs buy-and-hold strategy return: "
-                + new VersusBuyAndHoldCriterion(totalReturn).calculate(series, tradingRecord));
+        DisplayStatsUtils.printStat(series, tradingRecord);
     }
 }

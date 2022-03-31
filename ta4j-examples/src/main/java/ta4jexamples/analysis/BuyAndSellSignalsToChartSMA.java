@@ -54,7 +54,7 @@ import java.util.List;
  * This class builds a graphical chart showing the buy/sell signals of a
  * strategy.
  */
-public class BuyAndSellSignalsToChartBtc {
+public class BuyAndSellSignalsToChartSMA {
 
     /**
      * Builds a JFreeChart time series from a Ta4j bar series and an indicator.

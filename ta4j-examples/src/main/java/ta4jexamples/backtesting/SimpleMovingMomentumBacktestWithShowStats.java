@@ -33,6 +33,7 @@ import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.strategies.MovingMomentumStrategy;
+import ta4jexamples.utils.DisplayStatsUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,49 +50,27 @@ public class SimpleMovingMomentumBacktestWithShowStats {
         BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         final List<Strategy> strategies = new ArrayList<>();
-        strategies.add(MovingMomentumStrategy.buildStrategy("name", series, 4, 40, 10, 15));
+        //strategies.add(MovingMomentumStrategy.buildStrategy("name", series, 4, 40, 10, 15));
 
-        /*for (int i = 8; i <= 11; i ++) {
-            for (int j = i + 5; j <= 26; j ++) {
+        for (int i = 5; i <= 20; i = i + 2) {
+            for (int j = i + 5; j <= 50; j = j + 5) {
                 Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j, series, i, j, 14, 18);
                 strategies.add(strategy);
             }
-        }*/
+        }
 
-        /*for (int i = 9; i <= 26; i ++) {
-            for (int j = i; j <= 26; j ++) {
-                Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j, series, i, j, 14, 18);
-                strategies.add(strategy);
-            }
-        }*/
+        /*Name of strategy: MovingMomentum 19_39
+        totalProfitLoss: -534745.0
+        totalProfitLossPercentage: -21.364912224273855061595981999530
+        totalLoss: -3104040.0
+        totalProfit: 2569295.0
+        lossCount: 112
+        profitCount: 60*/
 
-        /*for (int i = 9; i <= 26; i ++) {
-            for (int j = i; j <= 26; j ++) {
-                for (int k = 9; k <= 26; k ++) {
-                    for (int n = 9; n <= 26; n ++) {
-                        Strategy strategy = MovingMomentumStrategy.buildStrategy("MovingMomentum " + i + "_" + j + "_" + k + "_" + n, series, i, j, k, n);
-                        strategies.add(strategy);
-                    }
-                }
-            }
-        }*/
         BacktestExecutor backtestExecutor = new BacktestExecutor(series);
         List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY).stream()
                 .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLoss(), reverseOrder()))
                 .collect(Collectors.toList());
-        for (TradingStatement tradingStatement : execute) {
-            Strategy strategy = tradingStatement.getStrategy();
-            System.out.println("\nName of strategy: " +strategy.getName());
-
-            Num totalProfitLoss = tradingStatement.getPerformanceReport().getTotalProfitLoss();
-            Num totalProfitLossPercentage = tradingStatement.getPerformanceReport().getTotalProfitLossPercentage();
-            System.out.println("totalProfitLoss: " + totalProfitLoss);
-            System.out.println("totalProfitLossPercentage: " + totalProfitLossPercentage);
-        }
-        System.out.println(execute);
-
-        /*Name of strategy: MovingMomentum 8_22
-        totalProfitLoss: -441690.0
-        totalProfitLossPercentage: -13.616501186872136266018823475240*/
+        DisplayStatsUtils.printStats(execute);
     }
 }

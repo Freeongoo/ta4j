@@ -34,10 +34,8 @@ import org.ta4j.core.indicators.EMAIndicator;
 import org.ta4j.core.indicators.MACDIndicator;
 import org.ta4j.core.indicators.StochasticOscillatorKIndicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.rules.CrossedDownIndicatorRule;
-import org.ta4j.core.rules.CrossedUpIndicatorRule;
-import org.ta4j.core.rules.OverIndicatorRule;
-import org.ta4j.core.rules.UnderIndicatorRule;
+import org.ta4j.core.num.DecimalNum;
+import org.ta4j.core.rules.*;
 
 import ta4jexamples.loaders.CsvTradesLoader;
 
@@ -79,6 +77,8 @@ public class MovingMomentumStrategy {
         Rule exitRule = new UnderIndicatorRule(shortEma, longEma) // Trend
                 .and(new CrossedUpIndicatorRule(stochasticOscillK, 80)) // Signal 1
                 .and(new UnderIndicatorRule(macd, emaMacd)); // Signal 2
+                //.or(new StopLossRule(closePrice, DecimalNum.valueOf(1.)))
+                //.or(new StopGainRule(closePrice, DecimalNum.valueOf(2.)));
 
         return new BaseStrategy(name, entryRule, exitRule);
     }

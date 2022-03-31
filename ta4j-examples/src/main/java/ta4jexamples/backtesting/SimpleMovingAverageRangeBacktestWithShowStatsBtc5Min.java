@@ -33,6 +33,7 @@ import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.strategies.SMAIndicatorStrategy;
+import ta4jexamples.utils.DisplayStatsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,22 +53,13 @@ public class SimpleMovingAverageRangeBacktestWithShowStatsBtc5Min {
 
         final List<Strategy> strategies = new ArrayList<>();
         for (int i = start; i <= stop; i += step) {
-            Strategy strategy = SMAIndicatorStrategy.buildStrategy(series, 3);
+            Strategy strategy = SMAIndicatorStrategy.buildStrategy(series, i);
             strategies.add(strategy);
         }
         BacktestExecutor backtestExecutor = new BacktestExecutor(series);
         List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY).stream()
                 .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLoss(), reverseOrder()))
                 .collect(Collectors.toList());
-        for (TradingStatement tradingStatement : execute) {
-            Strategy strategy = tradingStatement.getStrategy();
-            System.out.println("\nName of strategy: " +strategy.getName());
-
-            Num totalProfitLoss = tradingStatement.getPerformanceReport().getTotalProfitLoss();
-            Num totalProfitLossPercentage = tradingStatement.getPerformanceReport().getTotalProfitLossPercentage();
-            System.out.println("totalProfitLoss: " + totalProfitLoss);
-            System.out.println("totalProfitLossPercentage: " + totalProfitLossPercentage);
-        }
-        System.out.println(execute);
+        DisplayStatsUtils.printStats(execute);
     }
 }
