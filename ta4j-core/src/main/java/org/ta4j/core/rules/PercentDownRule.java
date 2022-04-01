@@ -51,6 +51,12 @@ public class PercentDownRule extends AbstractRule {
                 .mapToDouble(b -> b.getClosePrice().doubleValue())
                 .max().orElseThrow(() -> new RuntimeException("Cannot get max candle"));
 
+        for (Bar bar : barsForAnalyse) {
+            if (bar.getLowPrice().doubleValue() < current.doubleValue()) {
+                return false;
+            }
+        }
+
         if (current.doubleValue() > maxClosePrice) {
             return false;
         }

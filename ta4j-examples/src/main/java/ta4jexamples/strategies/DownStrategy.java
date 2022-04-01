@@ -61,10 +61,11 @@ public class DownStrategy {
         // Getting the bar series
         //BarSeries series = CsvTradesLoader.loadBitstampSeries();
         //BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        //BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("ETH", "20210330-20220330_ETH-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         // Building the trading strategy
-        Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(0.9), 5);
+        Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(0.8), 13);
         //Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(1.3), 7);
 
         // Running the strategy
