@@ -42,23 +42,21 @@ public class PercentDownRule extends AbstractRule {
         Num current = closePrice.getValue(index);
         BarSeries barSeries = closePrice.getBarSeries();
         int indexTo = index - numberCandlesBeforeForCheck;
-        List<Bar> bars = new ArrayList<>();
-        for (int i = indexTo; i <= index; i++) {
-            bars.add(barSeries.getBar(i));
+        List<Bar> barsForAnalyse = new ArrayList<>();
+        for (int i = indexTo; i < index; i++) {
+            barsForAnalyse.add(barSeries.getBar(i));
         }
 
-        double maxMinValue = bars.stream()
+        double maxClosePrice = barsForAnalyse.stream()
                 .mapToDouble(b -> b.getClosePrice().doubleValue())
-                .max().orElseThrow(() -> new RuntimeException(""));
+                .max().orElseThrow(() -> new RuntimeException("Cannot get max candle"));
 
-        if (current.doubleValue() > maxMinValue) {
+        if (current.doubleValue() > maxClosePrice) {
             return false;
         }
 
-        Double percentDiff = getPercentDiff(current.doubleValue(), maxMinValue);
-        boolean isTrue = percentDiff > gainPercentage.doubleValue();
-        //System.out.println(isTrue);
-        return isTrue;
+        Double percentDiff = getPercentDiff(current.doubleValue(), maxClosePrice);
+        return percentDiff > gainPercentage.doubleValue();
     }
 
     public static <V extends Number> Double getPercentDiff(V value1, V value2) {
