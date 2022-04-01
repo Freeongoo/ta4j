@@ -42,6 +42,7 @@ import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.loaders.CsvTradesLoader;
+import ta4jexamples.loaders.CustomCsvBarsLoader;
 import ta4jexamples.strategies.MovingMomentumStrategy;
 import ta4jexamples.strategies.SMAIndicatorStrategy;
 
@@ -130,7 +131,7 @@ public class BuyAndSellSignalsToChartSMA {
     public static void main(String[] args) {
 
         // Getting the bar series
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         // Building the trading strategy
         //Strategy strategy = MovingMomentumStrategy.buildStrategy(series);

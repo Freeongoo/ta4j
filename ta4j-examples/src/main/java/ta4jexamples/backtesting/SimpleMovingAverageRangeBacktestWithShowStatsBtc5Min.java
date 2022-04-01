@@ -32,6 +32,7 @@ import org.ta4j.core.reports.TradingStatement;
 import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 import ta4jexamples.loaders.CsvBarsLoader;
+import ta4jexamples.loaders.CustomCsvBarsLoader;
 import ta4jexamples.strategies.SMAIndicatorStrategy;
 import ta4jexamples.utils.DisplayStatsUtils;
 
@@ -45,7 +46,7 @@ import static java.util.Comparator.reverseOrder;
 public class SimpleMovingAverageRangeBacktestWithShowStatsBtc5Min {
 
     public static void main(String[] args) {
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         int start = 3;
         int stop = 50;

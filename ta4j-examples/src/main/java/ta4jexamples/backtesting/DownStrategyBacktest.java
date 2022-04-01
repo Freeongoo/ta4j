@@ -29,10 +29,8 @@ import org.ta4j.core.Strategy;
 import org.ta4j.core.Trade;
 import org.ta4j.core.num.DecimalNum;
 import org.ta4j.core.reports.TradingStatement;
-import ta4jexamples.loaders.CsvBarsLoader;
+import ta4jexamples.loaders.CustomCsvBarsLoader;
 import ta4jexamples.strategies.DownStrategy;
-import ta4jexamples.strategies.MovingMomentumStrategy;
-import ta4jexamples.strategies.SMAIndicatorStrategy;
 import ta4jexamples.utils.DisplayStatsUtils;
 
 import java.util.ArrayList;
@@ -45,10 +43,8 @@ import static java.util.Comparator.reverseOrder;
 public class DownStrategyBacktest {
 
     public static void main(String[] args) {
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min1.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        //BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         final List<Strategy> strategies = new ArrayList<>();
         for (double i = 0.5; i <= 3.; i = i + 0.1) {
@@ -58,46 +54,87 @@ public class DownStrategyBacktest {
             }
         }
         BacktestExecutor backtestExecutor = new BacktestExecutor(series);
-        backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY);
         List<TradingStatement> execute = backtestExecutor.execute(strategies, DecimalNum.valueOf(50), Trade.TradeType.BUY).stream()
                 .sorted(comparing(e -> e.getPerformanceReport().getTotalProfitLossPercentage(), reverseOrder()))
                 .collect(Collectors.toList());
         DisplayStatsUtils.printStats(execute);
 
-        // 5 min (long)
+        // *******************************************
+        // *** 20210330-20220330_BTC-USDT_min5.csv ***
+        // *******************************************
         /*Name of strategy: Down percent:0.8999999999999999 count: 5
-        totalProfitLoss: 1127000.0
-        totalProfitLossPercentage: 55.914305886561113214347340783438
-        totalLoss: -5586475.0
-        totalProfit: 6713475.0
-        lossCount: 127
-        profitCount: 240*/
+        totalProfitLoss: 2662185.0
+        totalProfitLossPercentage: 134.63170704884587301851158010020
+        totalLoss: -19213325.0
+        totalProfit: 21875510.0
+        lossCount: 468
+        profitCount: 788
 
-        // 5 min long
-        /*Name of strategy: Down percent:1.3 count: 7
-        totalProfitLoss: 2642515.0
-        totalProfitLossPercentage: 119.52392016081009114588923761094
-        totalLoss: -13767010.0
-        totalProfit: 16409525.0
-        lossCount: 321
-        profitCount: 575*/
+        Name of strategy: Down percent:0.7999999999999999 count: 11
+        totalProfitLoss: 2042130.0
+        totalProfitLossPercentage: 118.91269424012929408732693246936
+        totalLoss: -27253805.0
+        totalProfit: 29295935.0
+        lossCount: 664
+        profitCount: 1042
 
-        // 5  min (down trend)
-        /*Name of strategy: Down percent:0.8999999999999999 count: 5
-        totalProfitLoss: 704075.0
-        totalProfitLossPercentage: 33.872918948018439396169890871145
-        totalLoss: -3508840.0
-        totalProfit: 4212915.0
-        lossCount: 69
-        profitCount: 135*/
+        Name of strategy: Down percent:0.7999999999999999 count: 5
+        totalProfitLoss: 2280240.0
+        totalProfitLossPercentage: 118.26843983923454441147861142831
+        totalLoss: -22437100.0
+        totalProfit: 24717340.0
+        lossCount: 550
+        profitCount: 885
 
-        // 1 min
-        /*Name of strategy: Down percent:0.9999999999999999 count: 11
-        totalProfitLoss: 846750.0
-        totalProfitLossPercentage: 35.514873191527168309581781644896
-        totalLoss: -2573590.0
-        totalProfit: 3420340.0
-        lossCount: 55
-        profitCount: 116*/
+        Name of strategy: Down percent:0.7999999999999999 count: 13
+        totalProfitLoss: 2060400.0
+        totalProfitLossPercentage: 117.32564568638210047625074676990
+        totalLoss: -27932805.0
+        totalProfit: 29993205.0
+        lossCount: 682
+        profitCount: 1061*/
+
+        // *******************************************
+        // *** 20211108-20220124_BTC-USDT_min5.csv ***
+        // *******************************************
+        /*Name of strategy: Down percent:2.600000000000001 count: 7
+        totalProfitLoss: 73900.0
+        totalProfitLossPercentage: 4.0507822445485920316631310582930
+        totalLoss: -533760.0
+        totalProfit: 607660.0
+        lossCount: 6
+        profitCount: 17
+
+        Name of strategy: Down percent:1.6000000000000003 count: 9
+        totalProfitLoss: 8220.0
+        totalProfitLossPercentage: 1.8231257265917115980459167441622
+        totalLoss: -1722460.0
+        totalProfit: 1730680.0
+        lossCount: 32
+        profitCount: 55
+
+        Name of strategy: Down percent:2.0000000000000004 count: 3
+        totalProfitLoss: 11485.0
+        totalProfitLossPercentage: 1.4581604774120629949824820607138
+        totalLoss: -490505.0
+        totalProfit: 501990.0
+        lossCount: 5
+        profitCount: 14
+
+        Name of strategy: Down percent:2.1000000000000005 count: 3
+        totalProfitLoss: -4835.0
+        totalProfitLossPercentage: 0.7890475696107004312347557339785
+        totalLoss: -455905.0
+        totalProfit: 451070.0
+        lossCount: 4
+        profitCount: 12
+
+        Name of strategy: Down percent:0.8999999999999999 count: 5
+        totalProfitLoss: -75110.0
+        totalProfitLossPercentage: 0.3790469975280197058218029817740
+        totalLoss: -3651590.0
+        totalProfit: 3576480.0
+        lossCount: 76
+        profitCount: 117*/
     }
 }

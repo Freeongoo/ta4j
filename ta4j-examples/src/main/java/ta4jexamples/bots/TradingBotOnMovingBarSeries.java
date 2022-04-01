@@ -44,6 +44,7 @@ import org.ta4j.core.rules.OverIndicatorRule;
 import org.ta4j.core.rules.UnderIndicatorRule;
 
 import ta4jexamples.loaders.CsvTradesLoader;
+import ta4jexamples.strategies.DownStrategy;
 import ta4jexamples.utils.DisplayStatsUtils;
 
 /**
@@ -134,6 +135,7 @@ public class TradingBotOnMovingBarSeries {
 
         // Building the trading strategy
         Strategy strategy = buildStrategy(series);
+        //Strategy strategy = DownStrategy.buildStrategy("down", series, DecimalNum.valueOf(1.3), 7);
 
         // Initializing the trading history
         TradingRecord tradingRecord = new BaseTradingRecord();

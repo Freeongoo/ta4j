@@ -30,6 +30,7 @@ import org.ta4j.core.num.DecimalNum;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.rules.*;
 import ta4jexamples.loaders.CsvBarsLoader;
+import ta4jexamples.loaders.CustomCsvBarsLoader;
 import ta4jexamples.utils.DisplayStatsUtils;
 import ta4jexamples.utils.MathUtils;
 import ta4jexamples.utils.PriceUtils;
@@ -42,7 +43,7 @@ public class DownStrategy {
         }
 
         return new BaseStrategy(name, createEntryRule(series, gainPercentage, barCount),
-                createExitRule(series, barCount));
+                createExitRule(series));
     }
 
     private static Rule createEntryRule(BarSeries series, Num gainPercentage, int barCount) {
@@ -50,7 +51,7 @@ public class DownStrategy {
         return new PercentDownRule(closePrice, gainPercentage, barCount);
     }
 
-    private static Rule createExitRule(BarSeries series, int barCount) {
+    private static Rule createExitRule(BarSeries series) {
         ClosePriceIndicator closePrice = new ClosePriceIndicator(series);
         return new StopLossRule(closePrice, DecimalNum.valueOf(1.5))
                 .or(new StopGainRule(closePrice, DecimalNum.valueOf(1.)));
@@ -59,12 +60,12 @@ public class DownStrategy {
     public static void main(String[] args) {
         // Getting the bar series
         //BarSeries series = CsvTradesLoader.loadBitstampSeries();
-        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        //BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         // Building the trading strategy
-        //Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(0.9), 5);
-        Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(1.3), 7);
+        Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(0.9), 5);
+        //Strategy strategy = buildStrategy("down", series, DecimalNum.valueOf(1.3), 7);
 
         // Running the strategy
         BarSeriesManager seriesManager = new BarSeriesManager(series);

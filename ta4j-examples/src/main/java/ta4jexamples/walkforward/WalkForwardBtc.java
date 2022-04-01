@@ -29,6 +29,7 @@ import org.ta4j.core.analysis.criteria.pnl.GrossReturnCriterion;
 import org.ta4j.core.num.Num;
 import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.loaders.CsvTradesLoader;
+import ta4jexamples.loaders.CustomCsvBarsLoader;
 import ta4jexamples.strategies.CCICorrectionStrategy;
 import ta4jexamples.strategies.GlobalExtremaStrategy;
 import ta4jexamples.strategies.MovingMomentumStrategy;
@@ -166,7 +167,7 @@ public class WalkForwardBtc {
 
     public static void main(String[] args) {
         // Splitting the series into slices
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20211108-20220124_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
         List<BarSeries> subseries = splitSeries(series, Duration.ofHours(6), Duration.ofDays(7));
 
         // Building the map of strategies

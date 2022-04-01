@@ -56,7 +56,9 @@ public class PercentDownRule extends AbstractRule {
         }
 
         Double percentDiff = getPercentDiff(current.doubleValue(), maxMinValue);
-        return percentDiff > gainPercentage.doubleValue();
+        boolean isTrue = percentDiff > gainPercentage.doubleValue();
+        //System.out.println(isTrue);
+        return isTrue;
     }
 
     public static <V extends Number> Double getPercentDiff(V value1, V value2) {

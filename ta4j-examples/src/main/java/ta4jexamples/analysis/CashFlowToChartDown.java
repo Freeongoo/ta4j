@@ -41,6 +41,7 @@ import org.ta4j.core.num.DecimalNum;
 import org.ta4j.core.num.Num;
 import ta4jexamples.loaders.CsvBarsLoader;
 import ta4jexamples.loaders.CsvTradesLoader;
+import ta4jexamples.loaders.CustomCsvBarsLoader;
 import ta4jexamples.strategies.DownStrategy;
 import ta4jexamples.strategies.MovingMomentumStrategy;
 
@@ -112,8 +113,8 @@ public class CashFlowToChartDown {
 
         // Getting the bar series
         //BarSeries series = CsvTradesLoader.loadBitstampSeries();
-        //BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20211108-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
-        BarSeries series = CsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        //BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20211108-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
+        BarSeries series = CustomCsvBarsLoader.loadCsvSeries("BTC", "20210330-20220330_BTC-USDT_min5.csv", "yyyy-MM-dd'T'HH:mm:ss");
 
         // Building the trading strategy
         Strategy strategy = DownStrategy.buildStrategy("down", series, DecimalNum.valueOf(0.9), 5);
