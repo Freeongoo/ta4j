@@ -70,7 +70,6 @@ public class DownBotOnMovingBarSeries {
 
                 int endIndex = series.getEndIndex();
                 if (strategy.shouldEnter(endIndex)) {
-                    // Our strategy should enter
                     boolean entered = tradingRecord.enter(endIndex, lastBar.getClosePrice(), DecimalNum.valueOf(10));
                     if (entered) {
                         Trade entry = tradingRecord.getLastEntry();
@@ -78,8 +77,6 @@ public class DownBotOnMovingBarSeries {
                                 + ", amount=" + entry.getAmount().doubleValue() + ")");
                     }
                 } else if (strategy.shouldExit(endIndex, tradingRecord)) {
-                    // Our strategy should exit
-                    System.out.println("Strategy should EXIT on " + endIndex);
                     boolean exited = tradingRecord.exit(endIndex, lastBar.getClosePrice(), DecimalNum.valueOf(10));
                     if (exited) {
                         Trade exit = tradingRecord.getLastExit();
@@ -93,5 +90,17 @@ public class DownBotOnMovingBarSeries {
         }
 
         DisplayStatsUtils.printStat(series, tradingRecord);
+
+        /*Number of positions for the strategy: 259
+        Total return: 2.6989282249549098914903029014351
+        Number of bars: 9318
+        Average return (per bar): 1.0001065580208050587174284373759292066097259521484375
+        Number of positions: 259
+        Winning positions ratio: 0.71042471042471042471042471042471
+        Maximum drawdown: 0.096843807071906580922540208313434
+        Return over maximum drawdown: 27.868877799805558808300464392597
+        Total transaction cost (from $1000): 1218.2060061026681567160956915943
+        Buy-and-hold return: 0.57200198169144306897106667381927
+        Custom strategy return vs buy-and-hold strategy return: 4.7183896408435901511748818311433*/
     }
 }

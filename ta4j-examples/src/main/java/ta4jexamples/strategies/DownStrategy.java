@@ -72,7 +72,12 @@ public class DownStrategy {
         TradingRecord tradingRecord = seriesManager.run(strategy);
         DisplayStatsUtils.printStat(series, tradingRecord);
 
-        // Total return: 2.7650859409464753441105102817617  0.9 5
-        // Total return: 2.8732216648275912873136885284400  1.3 7
+        // ** "20211108-20220124_BTC-USDT_min5.csv" **
+        // Total return: 0.97586817146461803767387509311276  0.9 5
+        // Total return: 0.86578267057319301799547158661506  1.3 7
+
+        // ** "20210330-20220330_BTC-USDT_min5.csv" **
+        // Total return: 3.2276338288860000007573992975957  0.9 5
+        // Total return: 1.5518963290498996920900377520147  1.3 7
     }
 }
